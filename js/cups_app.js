@@ -373,8 +373,8 @@ experiment.initExperiment = function() {
   function show_ball() {
     if (state == 'show_ball') {
       if (game_count >= n_games) {
-        if (typeof emotiv.end_experiment != "undefined") {
-          emotiv.end_experiment();
+        if (typeof emotiv.endExperiment != "undefined") {
+          emotiv.endExperiment();
         }
         let ele = document.getElementById("messages");
         ele.innerHTML = "<p>Game Over</p><p>Please scroll down and click next to continue</p>";
