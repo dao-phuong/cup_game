@@ -287,6 +287,37 @@ class Cortex {
         })
     }
 
+    updateMarker(markerId, time, extras={}) {
+        let socket = this.socket;
+        const UPDATE_MARKER_REQUEST_ID = 16
+        let updateMarkerRequest = {
+            "jsonrpc": "2.0",
+            "id": UPDATE_MARKER_REQUEST_ID,
+            "method": "updateMarker", 
+            "params": {
+                "cortexToken": this.authToken, 
+                "session": this.sessionId, 
+                "markerId": markerId,
+                "time": time,
+                "extras": extras
+            }
+        }
+        console.log(updateMarkerRequest)
+        return new Promise(function(resolve, reject){
+            socket.send(JSON.stringify(updateMarkerRequest));
+            socket.onmessage = function(event) {
+                try {
+                    let data = JSON.parse(event.data);
+                    if(data['id']==UPDATE_MARKER_REQUEST_ID){
+                        console.log('UPDATE WITH EXTRAS MARKER RESULT --------------------------------')
+                        console.log(data)
+                        resolve(data)
+                    }
+                } catch (error) {}
+            }
+        })
+    }
+
     querySessions(){
         let socket = this.socket;
         const QUERY_SESSIONS_REQUEST_ID = 15
