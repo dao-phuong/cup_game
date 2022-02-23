@@ -138,12 +138,10 @@ experiment.initExperiment = function() {
 
   gl.compileShader(vertexShader);
   if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-     console.log("Error compiling vertexShader", gl.getShaderInfoLog(vertexShader));
      return;
   }
   gl.compileShader(fragmentShader);
   if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-     console.log("Error compiling fragmentShader", gl.getShaderInfoLog(fragmentShader));
      return;
   }
 
@@ -160,7 +158,6 @@ experiment.initExperiment = function() {
 
   gl.validateProgram(program);
   if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-     console.log("Error in program validation", gl.getProgramInfoLog(program));
      return;
   }
 
@@ -253,7 +250,6 @@ experiment.initExperiment = function() {
         if (rotation_sum > 2 * Math.PI) {
           rotation_sum = 2 * Math.PI;
         }
-        // console.log("rotation: " + delta_rotation.toString() + " delta_t: " + deltaTime.toString());
         rotation = m4.identity();
     } else if ((state != "guessing") && (state != "wait")) {
       delta_rotation = rotation_speed * deltaTime;
@@ -261,7 +257,6 @@ experiment.initExperiment = function() {
       if (rotation_sum > Math.PI) {
         delta_rotation -= rotation_sum - Math.PI;
       }
-      // console.log("rotation: " + delta_rotation.toString() + " delta_t: " + deltaTime.toString());
       rotation = m4.zRotation(delta_rotation, rotation);
     }
 
@@ -427,11 +422,6 @@ experiment.initExperiment = function() {
         }
       }
       mid_point = coordinate_mean(cups)
-      // if (cups.includes(ball_index)) {
-      //   let idx = cups.indexOf(ball_index);
-      //   ball_index = cups[(idx+1) % 2];
-      //   console.log("new_ball index", ball_index);
-      // }
       state = "rotate_cups";
     }
   }
@@ -593,11 +583,9 @@ function createBallCoordArray() {
     pts = pts.concat([x1, y1, z+ball_radius, 
                       0., 0., 2*ball_radius, 
                       x2, y2, z+ball_radius]);
-    // console.log([x1, y1, z+ball_radius, 0., 0., 2*ball_radius, x2, y2, z+ball_radius]);
     pts = pts.concat([x1, y1, ball_radius-z, 
                       x2, y2, ball_radius-z, 
                       0., 0., 0.]);
-    // console.log([x1, y1, ball_radius-z, x2, y2, ball_radius-z, 0., 0., 0.]);
   }
   for (let li=1; li<N/2; li++) {
     for (let lg=0; lg<M; lg++) {
@@ -605,7 +593,6 @@ function createBallCoordArray() {
       let theta2 = (lg+1) * 2 * Math.PI / M;
       let phi1 = li * Math.PI / N;  // small ... high
       let phi2 = (li+1) * Math.PI / N; // larger  ... low 
-      // console.log("phi1", phi1*180/Math.PI, "phi2", phi2*180/Math.PI)
       let z1 = ball_radius + ball_radius * Math.cos(phi1); // high
       let z2 = ball_radius + ball_radius * Math.cos(phi2); // low
       let x11 = ball_radius * Math.sin(phi1) * Math.cos(theta1); // sm left
@@ -616,26 +603,20 @@ function createBallCoordArray() {
       let y12 = ball_radius * Math.sin(phi1) * Math.sin(theta2);
       let y21 = ball_radius * Math.sin(phi2) * Math.sin(theta1);
       let y22 = ball_radius * Math.sin(phi2) * Math.sin(theta2);
-      // console.log("z1", z1, "z2", z2);
-      // console.log("x11", x11, "x12", x12, "x21", x21, "x22", x22);
-      // console.log("y11", y11, "y12", y12, "y21", y21, "y22", y22);
       pts = pts.concat([x21, y21, z2, 
                         x11, y11, z1, 
                         x22, y22, z2, 
                         x22, y22, z2, 
                         x11, y11, z1, 
                         x12, y12, z1]);
-      // console.log(     [x21, y21, z2, x11, y11, z1, x22, y22, z2, x22, y22, z2, x11, y11, z1, x12, y12, z1]);
       z1 = ball_radius - ball_radius * Math.cos(phi1); // low
       z2 = ball_radius - ball_radius * Math.cos(phi2); // high
-      // console.log("z1", z1, "z2", z2);
       pts = pts.concat([x11, y11, z1, 
                         x21, y21, z2, 
                         x12, y12, z1, 
                         x12, y12, z1, 
                         x21, y21, z2, 
                         x22, y22, z2]);
-      // console.log([x11, y11, z1, x21, y21, z2, x12, y12, z1, x12, y12, z1, x21, y21, z2, x22, y22, z2]);
     }
   }
   return pts;
@@ -648,7 +629,6 @@ function setGeometryBall(gl) {
     new Float32Array(pts),
     gl.STATIC_DRAW);
   let n_pts = pts.length/3;
-  console.log("n_pts", n_pts);
   return n_pts;
 }
 
@@ -714,7 +694,6 @@ function createCupCoordArray() {
                         bx2, by2, bz, 
                         tx1, ty1, tz, 
                         tx2, ty2, tz]);
-      // console.log([bx1, by1, bz, tx1, ty1, tz, bx2, by2, bz, bx2, by2, bz, tx1, ty1, tz, tx2, ty2, tz]);
   }
   return pts;
 }
@@ -725,18 +704,10 @@ function getColorFactorsFromCoordinates(pts) {
     let p1 = [pts[i+0], pts[i+1], pts[i+2]];
     let p2 = [pts[i+3], pts[i+4], pts[i+5]];
     let p3 = [pts[i+6], pts[i+7], pts[i+8]];
-    console.log("points")
-    console.log(p1)
-    console.log(p2)
-    console.log(p3)
     let a = m4.subtractVectors(p2, p1);
     let b = m4.subtractVectors(p3, p1);
-    console.log("vectors")
-    console.log(a)
-    console.log(b)
     let n = m4.normalize(m4.cross(a, b));
     let cf = (m4.dot(light_dir, n) + 1) / 2;
-    console.log("colorFactor " + cf.toString());
     colorFactors.push(cf)
   }
   return colorFactors;
@@ -750,7 +721,6 @@ function setGeometryCup(gl) {
     new Float32Array(pts),
     gl.STATIC_DRAW);
   let n_pts = pts.length/3;
-  // console.log("n_pts", n_pts);
   return n_pts;
 }
 
@@ -766,8 +736,6 @@ function setColorsBall(gl, n_pts) {
         c[0] = Math.round(COLOR_BALL[0]*colorFactors[ic]);
         c[1] = Math.round(COLOR_BALL[1]*colorFactors[ic]);
         c[2] = Math.round(COLOR_BALL[2]*colorFactors[ic]);
-        console.log("side_color ");
-        console.log(c[0], c[1], c[2]);
         colors = colors.concat(c);
       }
       ic += 1;
@@ -781,8 +749,6 @@ function setColorsBall(gl, n_pts) {
           c[0] = Math.round(COLOR_BALL[0]*colorFactors[ic]);
           c[1] = Math.round(COLOR_BALL[1]*colorFactors[ic]);
           c[2] = Math.round(COLOR_BALL[2]*colorFactors[ic]);
-          console.log("side_color ");
-          console.log(c[0], c[1], c[2]);
           colors = colors.concat(c);
         }
         ic += 1;
@@ -807,8 +773,6 @@ function setColorsCup(gl) {
           c[0] = Math.round(COLOR_CUP_BASE[0]*colorFactors[ic]);
           c[1] = Math.round(COLOR_CUP_BASE[1]*colorFactors[ic]);
           c[2] = Math.round(COLOR_CUP_BASE[2]*colorFactors[ic]);
-          console.log("top_color ");
-          console.log(c[0], c[1], c[2]);
           cols = cols.concat(c);
         }
       ic += 1;
@@ -822,8 +786,6 @@ function setColorsCup(gl) {
         c[0] = Math.round(COLOR_CUP_SIDE[0]*colorFactors[ic]);
         c[1] = Math.round(COLOR_CUP_SIDE[1]*colorFactors[ic]);
         c[2] = Math.round(COLOR_CUP_SIDE[2]*colorFactors[ic]);
-        console.log("side_color ");
-        console.log(c[0], c[1], c[2]);
         cols = cols.concat(c);
       }
       ic += 1;
